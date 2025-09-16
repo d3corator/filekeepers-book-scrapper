@@ -1,6 +1,6 @@
 # Book Scraper
 
-A scalable and fault-tolerant web crawling solution for https://books.toscrape.com.
+A scalable and fault-tolerant web crawling solution with automated change detection and scheduling for https://books.toscrape.com.
 
 ## Features
 
@@ -8,8 +8,10 @@ A scalable and fault-tolerant web crawling solution for https://books.toscrape.c
 - **MongoDB Storage**: NoSQL database with proper indexing and schema
 - **Retry Logic**: Robust error handling with configurable retry attempts
 - **Resume Functionality**: Resume from last successful crawl in case of failure
-- **Raw HTML Storage**: Store HTML snapshots as fallback
-- **Comprehensive Logging**: Detailed logging with configurable levels
+- **Change Detection**: Automated detection of new, updated, and removed books
+- **Scheduled Monitoring**: Daily change detection and weekly full crawls
+- **Comprehensive Logging**: Detailed logging with change alerts and reports
+- **Daily Reports**: JSON reports of daily changes and statistics
 
 ## Project Structure
 
@@ -20,6 +22,10 @@ src/
 │   ├── crawler.py   # Main crawler implementation
 │   ├── schemas.py   # Pydantic data models
 │   └── storage.py   # MongoDB storage handler
+├── scheduler/        # Change detection and scheduling
+│   ├── cli.py       # Scheduler command-line interface
+│   ├── change_detector.py  # Change detection logic
+│   └── runner.py    # APScheduler runner
 └── utils/           # Configuration and utilities
 ```
 
@@ -83,6 +89,22 @@ pdm run crawl
 
 # Resume from last checkpoint
 pdm run crawl --resume
+```
+
+### Run the Scheduler
+
+```bash
+# Start the scheduler daemon (runs continuously)
+pdm run scheduler
+
+# Run change detection manually
+pdm run detect
+
+# Generate daily report
+pdm run report
+
+# Generate report for specific date
+pdm run report --date 2024-01-15
 ```
 
 
@@ -189,11 +211,39 @@ pdm run test --cov=src --cov-report=html
 pdm run pytest tests/crawler/test_crawler.py
 ```
 
+## Scheduler Features
+
+### Automated Jobs
+- **Daily Change Detection** (2:00 AM): Detects new, updated, and removed books
+- **Daily Report Generation** (3:00 AM): Creates JSON reports of daily changes
+- **Weekly Full Crawl** (Sunday 1:00 AM): Performs complete site crawl
+- **Health Checks** (Every hour): Monitors system health
+
+### Change Detection
+- **Content Hash Comparison**: Efficient change detection using MD5 hashes
+- **Detailed Change Tracking**: Tracks specific field changes (price, availability, etc.)
+- **Change Logging**: Stores all changes with timestamps and detailed information
+
+### Logging and Alerts
+- **Console Logging**: Real-time output to console
+- **File Logging**: Detailed logs saved to `logs/scheduler.log`
+- **Change Alerts**: Dedicated change alerts in `logs/change_alerts.log`
+- **Error Handling**: Comprehensive error logging and alerting
+
+### Reports
+- **Daily Reports**: JSON files in `reports/` directory
+- **Change Statistics**: Summary of new, removed, and updated books
+- **Price Change Tracking**: Detailed price change analysis
+
 ## Monitoring
 
-- **Logs**: Check `crawler.log` for detailed crawl logs
+- **Logs**: Check `logs/` directory for detailed logs
+  - `crawler.log`: Crawler activity logs
+  - `scheduler.log`: Scheduler and job logs
+  - `change_alerts.log`: Change detection alerts
+- **Reports**: Check `reports/` directory for daily change reports
 - **MongoDB**: Use Mongo Express at http://localhost:8081
-- **Metrics**: Crawl sessions and statistics stored in MongoDB
+- **Metrics**: Crawl sessions and change logs stored in MongoDB
 
 ## Troubleshooting
 

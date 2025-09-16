@@ -180,3 +180,25 @@ class MongoDBStorage:
         except Exception as e:
             logger.error(f"Failed to get books count: {e}")
             return 0
+    
+    async def get_change_logs_by_date_range(
+        self, 
+        start_date: datetime, 
+        end_date: datetime
+    ) -> List[ChangeLog]:
+        """Get change logs within a date range"""
+        try:
+            logs_data = await asyncio.to_thread(
+                list,
+                self.db.change_logs.find({
+                    "timestamp": {
+                        "$gte": start_date,
+                        "$lte": end_date
+                    }
+                }).sort("timestamp", -1)
+            )
+            change_logs = [ChangeLog(**log_data) for log_data in logs_data]
+            return change_logs
+        except Exception as e:
+            logger.error(f"Failed to get change logs by date range: {e}")
+            return []
