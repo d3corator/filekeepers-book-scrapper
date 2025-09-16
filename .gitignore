@@ -27,4 +27,15 @@ htmlcov/
 
 AGENTS.md
 
+logs/
 crawler.log
+change_alerts.log
+scheduler.log
+
+reports/
+
+.DS_Store
+.DS_Store?
+._.DS_Store
+._*
+._*/
