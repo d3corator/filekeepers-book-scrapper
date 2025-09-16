@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+
+# PDM
+.pdm-python
+.pdm-build/
+.pdm.toml
+
+# Env
+.env
+.env.*
+
+# Coverage
+.coverage*
+htmlcov/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+AGENTS.md
+
+crawler.log
