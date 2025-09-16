@@ -202,3 +202,82 @@ class MongoDBStorage:
         except Exception as e:
             logger.error(f"Failed to get change logs by date range: {e}")
             return []
+    
+    async def get_book_by_upc(self, upc: str) -> Optional[Book]:
+        """Get a book by its UPC"""
+        try:
+            book_data = await asyncio.to_thread(
+                self.db.books.find_one,
+                {"upc": upc}
+            )
+            if book_data:
+                return Book(**book_data)
+            return None
+        except Exception as e:
+            logger.error(f"Failed to get book by UPC {upc}: {e}")
+            return None
+    
+    async def get_books_paginated(
+        self, 
+        filter_query: dict = None, 
+        sort_query: list = None, 
+        skip: int = 0, 
+        limit: int = 20
+    ) -> List[Book]:
+        """Get books with pagination and filtering"""
+        try:
+            if filter_query is None:
+                filter_query = {}
+            if sort_query is None:
+                sort_query = [("name", 1)]
+            
+            books_data = await asyncio.to_thread(
+                list,
+                self.db.books.find(filter_query)
+                .sort(sort_query)
+                .skip(skip)
+                .limit(limit)
+            )
+            books = [Book(**book_data) for book_data in books_data]
+            return books
+        except Exception as e:
+            logger.error(f"Failed to get paginated books: {e}")
+            return []
+    
+    async def get_change_logs_paginated(
+        self, 
+        filter_query: dict = None, 
+        skip: int = 0, 
+        limit: int = 20
+    ) -> List[ChangeLog]:
+        """Get change logs with pagination and filtering"""
+        try:
+            if filter_query is None:
+                filter_query = {}
+            
+            logs_data = await asyncio.to_thread(
+                list,
+                self.db.change_logs.find(filter_query)
+                .sort("timestamp", -1)
+                .skip(skip)
+                .limit(limit)
+            )
+            change_logs = [ChangeLog(**log_data) for log_data in logs_data]
+            return change_logs
+        except Exception as e:
+            logger.error(f"Failed to get paginated change logs: {e}")
+            return []
+    
+    async def get_change_logs_count(self, filter_query: dict = None) -> int:
+        """Get count of change logs with filtering"""
+        try:
+            if filter_query is None:
+                filter_query = {}
+            
+            return await asyncio.to_thread(
+                self.db.change_logs.count_documents,
+                filter_query
+            )
+        except Exception as e:
+            logger.error(f"Failed to get change logs count: {e}")
+            return 0

@@ -11,7 +11,13 @@ dependencies = [
   "pydantic-settings>=2.3.0",
   "pymongo>=4.6.0",
   "beautifulsoup4>=4.12.0",
-  "apscheduler>=3.10.4"
+  "apscheduler>=3.10.4",
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.30.0",
+  "python-multipart>=0.0.6",
+  "python-jose[cryptography]>=3.3.0",
+  "passlib[bcrypt]>=1.7.4",
+  "slowapi>=0.1.9"
 ]
 
 [tool.pdm]
@@ -34,7 +40,8 @@ crawl = { cmd = "python -m src.crawler.cli crawl --resume" }
 scheduler = { cmd = "python -m src.scheduler.cli run" }
 detect = { cmd = "python -m src.scheduler.cli detect" }
 report = { cmd = "python -m src.scheduler.cli report" }
-test = { cmd = "pytest -q --maxfail=1 --disable-warnings --cov=src --cov-report=term-missing" }
+api = { cmd = "uvicorn src.api.app:app --reload --host 0.0.0.0 --port 8000" }
+test = { cmd = "pytest -q --maxfail=1 --disable-warnings" }
 lint = { cmd = "ruff check ." }
 format = { cmd = "black ." }
 typecheck = { cmd = "mypy src" }

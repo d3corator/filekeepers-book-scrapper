@@ -1,4 +1,9 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
 import pytest
+from decimal import Decimal
 from unittest.mock import AsyncMock, patch
 from src.crawler.crawler import BookCrawler
 from src.crawler.schemas import Book
@@ -50,9 +55,9 @@ async def test_parse_book_page():
     assert book.name == "Test Book Title"
     assert book.category == "Fiction"
     assert book.upc == "123456789"
-    assert book.price_including_tax == 19.99
-    assert book.price_excluding_tax == 16.66
-    assert book.tax_amount == 3.33
+    assert book.price_including_tax == Decimal('19.99')
+    assert book.price_excluding_tax == Decimal('16.66')
+    assert book.tax_amount == Decimal('3.33')
     assert book.availability_count == 22
     assert book.rating == 3
     assert book.number_of_reviews == 5

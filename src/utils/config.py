@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     # Logging settings
     log_level: str = "INFO"
     
+    # API settings
+    api_key: str = "default-api-key"
+    
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

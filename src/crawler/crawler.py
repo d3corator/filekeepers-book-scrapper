@@ -271,7 +271,7 @@ class BookCrawler:
             description = self._extract_text(soup, '#product_description + p')
             
             # UPC (Universal Product Code)
-            upc = self._extract_text(soup, 'table.table tr:nth-of-type(1) td')
+            upc = self._extract_text(soup, 'table.table tr:nth-of-type(1) td:nth-of-type(2)')
             
             # Category (from breadcrumb)
             category = "Unknown"
@@ -283,7 +283,7 @@ class BookCrawler:
             
             # Price information
             price_including_tax = self._extract_price(soup, 'p.price_color')
-            price_excluding_tax = self._extract_price(soup, 'table.table tr:nth-of-type(3) td')
+            price_excluding_tax = self._extract_price(soup, 'table.table tr:nth-of-type(2) td:nth-of-type(2)')
             tax_amount = price_including_tax - price_excluding_tax
             
             # Availability
@@ -291,7 +291,7 @@ class BookCrawler:
             availability_count = self._extract_availability_count(availability)
             
             # Number of reviews
-            reviews_text = self._extract_text(soup, 'table.table tr:nth-of-type(6) td')
+            reviews_text = self._extract_text(soup, 'table.table tr:nth-of-type(3) td:nth-of-type(2)')
             number_of_reviews = 0
             if reviews_text and reviews_text.isdigit():
                 number_of_reviews = int(reviews_text)
